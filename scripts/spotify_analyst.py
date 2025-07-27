@@ -1,92 +1,100 @@
 # SPOTILYZE
+# File: For best practice, place your data file in the 'folder_file' directory using JSON format.
 
-## IMPORT DATA
-import pandas as pd
+## This script analyzes your Spotify 'Extended Streaming History' data using the pandas library.
 
-def import_data(name_file):
-  file_import = pd.read_csv(f'folder_file/{name_file}') # Don't forget to use delimeter if your type file is .txt
-  return file_import
+## Libraries
+import pandas as pd 
 
-def analyze_file():
-  while True:
-    print("""Choose one option:
-        1. Print all data
-        2. Print selected data
-        3. Exit
-  """)
-    user_option = int(input("Choose your option: "))
-    if user_option == 1:
-      if import_data == None:
-        print("No data imported")
-      else:
-        print(import_data)
-    elif user_option == 2:
-      while True:
-        print("""Choose the right answer in this option:
-              1. Print Top and bottom data 
-              2. Print selected range of data
-              3. Print specific condition based on column
-              4. Print selected one data only
-              5. Print data with sorting argument
-              6. Exit
-              """)
-        user_option = int(input("Choose one option: "))
-        if user_option == 1:
-          top_range = int(input("How many range do you want of top of the data (default: 5): "))
-          bottom_range = int(input("How many range do you want of bottom of the data (default: 5): "))
-          print(import_data.head(top_range))
-          print(import_data.tail(bottom_range))
-        elif user_option == 2:
-          start_range = int(input("Enter the start of the range: "))
-          end_range = int(input("Enter the end of the range: "))
-          print(import_data.iloc[start_range:end_range])
-        elif user_option == 3:
-          print('Coming soon')
-        elif user_option == 4:
-          selected_row = int(input("Which row do you want to search (using number): "))
-          selected_column = int(input("Which column do you want ot refers (using number): "))
-          selected_row = import_data.iloc[selected_row,selected_column]
-        elif user_option == 5:
-          user_sorting = input("Do you want use ascending or descending (a/d): ")
-          if user_sorting.lower() == 'a':
-            print(import_data.sort_values(ascending=True))
-          elif user_sorting.lower() == 'd':
-            print(import_data.sort_values(ascending=False))
-        elif user_option == 6:
-          break
-    elif user_option == 3:
-      break
-    else:
-      print("Your input is invalid, please try again!")
-      continue
-## MAIN PROGRAM
-### Section Instruction
+# --- Configuration ---
+file_path = 'folder_file/StreamingHistory_music_1.json' # Change this to your file path
+# ---------------------
 
-print("""WELCOME TO OUR SPOTILYZE
-Please read the instruction before using the program
-1. At least have one file to analyze
-2. Make sure the file is in the correct format (.JSON)
-3. Make sure the file is in the correct location
-4. Enjoy using this program, rate after you using it
-""")
+## Main Program
+print("# SPOTILYZE - ANALYZE YOUR SPOTIFY DATA")
+print("--------------------------------------")
+try:
+  df = pd.read_json(file_path)
+  print(f"'{file_path}' load succes\n")
+  print("# Print the 5 rows top of the data frame")
+  print("--------------------------------------")
+  print(df.head().to_string()) # to_string = avoid cutting data print
+  print("--------------------------------------\n")
+  print("# Print the 5 rows bottom of the data frame")
+  print("--------------------------------------")
+  print(df.tail().to_string())
+  print("--------------------------------------\n")
+except FileNotFoundError:
+  print(f"{file_path} not found. Please try again!")
+  exit()
+except Exception as e:
+  print(f"{file_path} load error. Please change your file or try again!")
+  exit()
 
-### Section Main
-while True:
-  print("""Select one option:
-1. Import your file
-2. Analyze it
-3. Exit
-""")
-  user_option = int(input("Choose one option: "))
-  if user_option == 1:
-    file_name = str(input("Text your file with that type: "))
-    import_data(file_name)
-    print(f"{file_name} added.\n")
-  elif user_option == 2:
-    analyze_file()
-  elif user_option == 3:
-    print("Thankyou for using our program, see you next time")
-    break
-  else:
-    print("Your input is invalid, please try again!")
-    continue
+## 1. Explore Data: Top and Bottom Rows
+### You can adjust the number of rows displayed by changing the argument in `head()` and `tail()`.
+print("## 1. Read the top and bottom of the data\n")
+print("## 1a. Print top rows of the dataframe")
+print("--------------------------------------")
+print(df.head(5).to_string()) # Read the top 5 rows
+print("--------------------------------------\n")
+print("## 1b. Print bottom rows of the dataframe")
+print("--------------------------------------")
+print(df.tail(5).to_string()) # Read the bottom 5 rows
+print("--------------------------------------\n")
+
+
+
+## 2. Most Played Songs
+# value_counts() sorts by default in descending order (most frequent first)
+print("## 2. Read most played songs on data")
+print("----------------- Most Played Songs ---------------------")
+most_played = df['trackName'].value_counts() # Default: Descending
+print(most_played)
+print("--------------------------------------\n")
+
+
+## 3. Most Listened Artists
+print("## 3. Read most artist recently on data")
+print("----------------- Most Artist Recently ---------------------")
+most_artist = df['artistName'].value_counts()
+print(most_artist)
+print("--------------------------------------\n")
+
+## 4. Analyze Play Duration
+print("## 4. Status of Duration Played on data")
+print("----------------- Status Played ---------------------")
+#### Conditions: Categorizing songs based on `msPlayed`
+df['Real Time'] = df['msPlayed'] / 1000
+df.loc[df['msPlayed'] < 5000, 'Status'] = 'Skip'
+df.loc[df['msPlayed'] >= 5000, 'Status'] = 'Partial Play' # Play not until end of the song
+df.loc[df['msPlayed'] >= 45000, 'Status'] = 'Full Play'
+#### Result: Displaying DataFrame with new 'Play Status' column
+print(df)
+print("--------------------------------------\n")
+
+## 5. Listening Trends by Time
+print("## 5. Tren based on time on data")
+
+df['endTime'] = pd.to_datetime(df['endTime'])
+df['Hour'] = df['endTime'].dt.hour # Return value using .dt and .hour used to extracting the hour (0-23)
+df['Day'] = df['endTime'].dt.day_name() # Return value using .dt and .day_name used to extracting the day of the week as a string ("Monday" - "Sunday")
+hour_listening = df['Hour'].value_counts() 
+dayof_listening = df['Day'].value_counts() 
+print("----------------- Hours in a day ---------------------")
+print(hour_listening.sort_values()) # Defaul Descending
+print("--------------------------------------\n")
+print("----------------- Days in a week ---------------------")
+# Define a specific order for days of the week
+print(dayof_listening.sort_values()) 
+print("--------------------------------------\n")
+
+## 6. Final DataFrame Overview
+print("## 6. Final Result")
+print("----------------- Final Result ---------------------")
+print(df) # Print 5 top and bottom of data
+
+## Save Results
+# Saving the final processed DataFrame to a CSV file in the 'results' folder.
+df.to_csv('results/final_result.csv', index=False)
+print("Your analyzed data has been saved to 'results/final_result.csv'")
