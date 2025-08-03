@@ -25,12 +25,24 @@ try:
   print("--------------------------------------")
   print(df.tail().to_string())
   print("--------------------------------------\n")
+# Exception handling
 except FileNotFoundError:
   print(f"{file_path} not found. Please try again!")
   exit()
 except Exception as e:
   print(f"Error loading {file_path}. Please change your file or try again!")
   exit()
+
+# ...existing code...
+print(f"{df.info()}\n")
+### Check for missing values in each row
+check_values = df.isnull()
+print(f"{check_values.sum()}")
+if check_values.sum().sum() == 0:
+    print("Note: There are no missing values in this data.\n")
+else:
+    print("Note: Some rows have missing values.\n")
+# ...existing code...
 
 ## 1. Explore Data: Top and Bottom Rows
 ### You can adjust the number of rows displayed by changing the argument in `head()` and `tail()`.
@@ -106,10 +118,23 @@ print("--------------------------------------\n")
 
 ## 6. Final DataFrame Overview
 print("## 6. Final Result")
+# Clean Data Process
+df = df.drop_duplicates(subset=['artistName', 'trackName']) # Remove duplicate data
+df = df.drop(columns=['endTime', 'msPlayed'])
 print("----------------- Final Result ---------------------")
-print(df) # Display the DataFrame
-
+final_result = df.sort_values(['artistName'], ascending=True)
+print(final_result) # Show the DataFrame
+# Summary Data Frame
+conclusion = {
+    "Top Artist": most_artist.head(1).index[0],
+    "Top Song": most_played.head(1).index[0],
+    "Total Real Time (sec)": int(df['Real Time'].sum()),
+    "Peak Hour": hour_listening.head(1).index[0],
+    "Peak Day": dayof_listening.head(1).index[0]
+}
+final_conclusion = pd.DataFrame([conclusion])
+print(final_conclusion)
 ## Save Results
 # Save the final processed DataFrame to a CSV file in the 'results' folder.
-df.to_csv('results/final_result.csv', index=False)
+final_result.to_csv('results/final_result.csv', index=False)
 print("Your analyzed data has been saved to 'results/final_result.csv'")
