@@ -43,7 +43,7 @@ You need these to run SPOTILYZE:
 
 ### Data
 
-You need your **Spotify Extended Streaming History** (a JSON file).
+You need your [Spotify Extended Streaming History](https://www.spotify.com/us/account/privacy/).
 
 **How to get your data:**
 
