@@ -28,8 +28,23 @@ SPOTILYZE is a Python tool that helps you understand your Spotify listening hist
 - **Play Status:** See if you usually skip, partially play, or fully play songs.
 - **Listening Trends:** Check what time of day and which days you listen to music the most.
 - **CSV Output:** Get a detailed CSV file with all your analyzed data.
+- **NEW: Data Visualization (v1.3):** See your listening habits with easy-to-read charts using matplotlib.  
+  You can view bar charts and histograms for your top songs, artists, play durations, and listening times.
 
 ---
+
+## Update v1.3
+
+**What’s new:**
+
+- Added feature to visualize your Spotify data with matplotlib charts.
+- Now you can see your listening patterns in colorful graphs, making your data easier to understand.
+- Make sure you have installed the required libraries:
+  ```
+  pip install matplotlib numpy pandas
+  ```
+
+...
 
 ## Requirements
 

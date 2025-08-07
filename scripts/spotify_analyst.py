@@ -5,7 +5,8 @@
 
 ## Libraries
 import pandas as pd
-import numpy as np 
+import numpy as np
+from matplotlib import pyplot as plt
 
 # --- Configuration ---
 file_path = 'folder_file/StreamingHistory_music_1.json' # Change this to your file path
@@ -65,6 +66,12 @@ print(most_played)
 print("------------------ Conclusion --------------------")
 print(f"-> Most Played Song: {most_played.head(1)}")
 print(f"-> Least Played Song: {most_played.tail(1)}")
+# Visualize of bar charts
+plt.bar(most_played.head(5).index, most_played.head(5).values)
+plt.xlabel('Song Name')
+plt.ylabel('Play Count')
+plt.title('Top 5 Most Played Songs')
+plt.show()
 print("--------------------------------------\n")
 
 ## 3. Most Listened Artists
@@ -75,6 +82,12 @@ print(most_artist)
 print("------------------ Conclusion --------------------")
 print(f"-> Most Played Artist: {most_artist.head(1)}")
 print(f"-> Least Played Artist: {most_artist.tail(1)}")
+# Visualize of bar charts
+plt.bar(most_artist.head(5).index, most_artist.head(5).values)
+plt.xlabel('Artist Name')
+plt.ylabel('Play Count')
+plt.title('Top 5 Most Listened Artists')
+plt.show()
 print("--------------------------------------\n")
 
 ## 4. Analyze Play Duration
@@ -94,6 +107,11 @@ print(f"-> Max value of msPlayed: {msplayed.max()}")
 print(f"-> Min value of msPlayed: {msplayed.min()}")
 print(f"-> Mean value of msPlayed: {int(msplayed.mean())}")
 print(f"-> Std value of msPlayed: {int(msplayed.std())}")
+plt.hist(df['msPlayed'] / 1000, bins=30)
+plt.xlabel('Play Duration (seconds)')
+plt.ylabel('Number of Plays')
+plt.title('Distribution of Play Durations')
+plt.show()
 print("--------------------------------------\n")
 
 ## 5. Listening Trends by Time
@@ -106,13 +124,27 @@ dayof_listening = df['Day'].value_counts()
 print("# 5a. Trends based on hours in a day") 
 print("----------------- Hours in a Day ---------------------")
 print(hour_listening.sort_values()) # Ascending order
+# Visualize of bar charts
+plt.bar(hour_listening.index, hour_listening.values)
+plt.xlabel('Hour of Day')
+plt.ylabel('Number of Plays')
+plt.title('Listening by Hour')
+plt.show()
 print("--------------------------------------\n")
 print("# 5b. Trends based on days in a week") 
 print("----------------- Days in a Week ---------------------")
 # Display listening counts for each day of the week
 print(dayof_listening.sort_values()) 
+# Visualize of bar charts
+plt.bar(dayof_listening.index, dayof_listening.values)
+plt.xlabel('Day of Week')
+plt.ylabel('Number of Plays')
+plt.title('Listening by Day')
+plt.show()
 print("------------------ Conclusion --------------------")
 print(f"-> Peak Hour: {hour_listening.head(1)}")
+print(f"-> Lowest Hour: {hour_listening.tail(1)}")
+print(f"-> Peak Day: {dayof_listening.head(1)}")
 print(f"-> Lowest Hour: {hour_listening.tail(1)}")
 print("--------------------------------------\n")
 
@@ -135,6 +167,7 @@ conclusion = {
 final_conclusion = pd.DataFrame([conclusion])
 print(final_conclusion)
 ## Save Results
-# Save the final processed DataFrame to a CSV file in the 'results' folder.
+# Save the final processed DataFrame to CSV and xlsx files in the 'results' folder.
 final_result.to_csv('results/final_result.csv', index=False)
+final_result.to_excel('results/final_result.xlsx', index=False)
 print("Your analyzed data has been saved to 'results/final_result.csv'")
